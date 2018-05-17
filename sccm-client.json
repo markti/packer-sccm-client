@@ -9,7 +9,7 @@
       "object_id": "{{user `object_id`}}",
   
       "managed_image_resource_group_name": "packer-dev",
-      "managed_image_name": "windows-baseline",
+      "managed_image_name": "sccm-client-baseline",
   
       "os_type": "Windows",
       "image_publisher": "MicrosoftWindowsServer",
