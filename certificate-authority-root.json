@@ -9,7 +9,7 @@
     "object_id": "{{user `object_id`}}",
 
     "managed_image_resource_group_name": "packer-dev",
-    "managed_image_name": "windows-baseline",
+    "managed_image_name": "ca-root_v1_0",
 
     "os_type": "Windows",
     "image_publisher": "MicrosoftWindowsServer",
@@ -28,7 +28,7 @@
         "role": "Root"
     },
 
-    "location": "East US",
+    "location": "Central US",
     "vm_size": "Standard_DS2_v2"
   }],
   "provisioners": [{

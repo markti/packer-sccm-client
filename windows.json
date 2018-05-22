@@ -9,7 +9,7 @@
     "object_id": "{{user `object_id`}}",
 
     "managed_image_resource_group_name": "packer-dev",
-    "managed_image_name": "windows-baseline",
+    "managed_image_name": "windows-baseline_v1_0",
 
     "os_type": "Windows",
     "image_publisher": "MicrosoftWindowsServer",
@@ -26,15 +26,16 @@
         "os": "Windows"
     },
 
-    "location": "East US",
+    "location": "Central US",
     "vm_size": "Standard_DS2_v2"
   }],
-  "provisioners": [{
-    "type": "powershell",
-    "inline": [
-      "Add-WindowsFeature Web-Server",
-      "& $env:SystemRoot\\System32\\Sysprep\\Sysprep.exe /oobe /generalize /quiet /quit",
-      "while($true) { $imageState = Get-ItemProperty HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup\\State | Select ImageState; if($imageState.ImageState -ne 'IMAGE_STATE_GENERALIZE_RESEAL_TO_OOBE') { Write-Output $imageState.ImageState; Start-Sleep -s 10  } else { break } }"
-    ]
-  }]
+  "provisioners": [
+      {
+        "type": "powershell",
+        "inline": [
+          "& $env:SystemRoot\\System32\\Sysprep\\Sysprep.exe /oobe /generalize /quiet /quit",
+          "while($true) { $imageState = Get-ItemProperty HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup\\State | Select ImageState; if($imageState.ImageState -ne 'IMAGE_STATE_GENERALIZE_RESEAL_TO_OOBE') { Write-Output $imageState.ImageState; Start-Sleep -s 10  } else { break } }"
+        ]
+      }
+  ]
 }

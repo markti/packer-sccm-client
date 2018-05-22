@@ -1,4 +1,5 @@
 {
+    "_comment" : "v1.1: updated to client version 1.5",
     "builders": [{
       "type": "azure-arm",
   
@@ -9,7 +10,7 @@
       "object_id": "{{user `object_id`}}",
   
       "managed_image_resource_group_name": "packer-dev",
-      "managed_image_name": "sccm-client-baseline",
+      "managed_image_name": "sccm-client-baseline_v1_1",
   
       "os_type": "Windows",
       "image_publisher": "MicrosoftWindowsServer",
@@ -28,7 +29,7 @@
           "role": "Client"
       },
   
-      "location": "East US",
+      "location": "Central US",
       "vm_size": "Standard_DS2_v2"
     }],
     "provisioners": [
@@ -43,8 +44,8 @@
             "type": "powershell",
             "inline": [
                 "mkdir C:\\sccm_install",
-                "Invoke-WebRequest -Uri https://wtsccmdeploy.blob.core.windows.net:443/software/SCCM-Client-Installer/WEN_TEST_Client_v1_4.zip -OutFile C:\\packer\\WEN_TEST_Client_v1_4.zip -TimeoutSec 6000",
-                "Expand-Archive C:\\packer\\WEN_TEST_Client_v1_4.zip -DestinationPath c:\\packer"
+                "Invoke-WebRequest -Uri https://wtsccmdeploy.blob.core.windows.net:443/software/SCCM-Client-Installer/WEN_TEST_Client_v1_5.zip -OutFile C:\\packer\\WEN_TEST_Client_v1_5.zip -TimeoutSec 6000",
+                "Expand-Archive C:\\packer\\WEN_TEST_Client_v1_5.zip -DestinationPath c:\\packer"
             ]
         },
         {

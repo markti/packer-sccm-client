@@ -1,5 +1,4 @@
 {
-  "_comment" : "v1_1 added sccm installation files",
   "builders": [{
     "type": "azure-arm",
 
@@ -10,7 +9,7 @@
     "object_id": "{{user `object_id`}}",
 
     "managed_image_resource_group_name": "packer-dev",
-    "managed_image_name": "sccm-primarysite_v1_0",
+    "managed_image_name": "windows-security-tools_v1_0",
 
     "os_type": "Windows",
     "image_publisher": "MicrosoftWindowsServer",
@@ -24,15 +23,14 @@
     "winrm_username": "packer",
 
     "azure_tags": {
-        "os": "Windows",
-        "app": "SCCM",
-        "role": "PrimarySite"
+        "os": "Windows"
     },
 
     "location": "Central US",
     "vm_size": "Standard_DS2_v2"
   }],
   "provisioners": [
+    
 		{
 			"type": "windows-shell",
 			"inline": 
@@ -40,51 +38,46 @@
 				"mkdir C:\\packer"
 			]
 		},
+		{
+			"type": "powershell",
+			"inline":
+			[
+				"Invoke-WebRequest -Uri https://wtsccmdeploy.blob.core.windows.net/software/Security/NessusAgent/Nessus.zip -OutFile C:\\packer\\Nessus.zip -TimeoutSec 6000",
+				"Expand-Archive c:\\packer\\Nessus.zip -DestinationPath c:\\packer"
+			]
+    },
+		{
+			"type": "powershell",
+			"inline":
+			[
+				"Invoke-WebRequest -Uri https://wtsccmdeploy.blob.core.windows.net/software/Security/PingID/PingID.zip -OutFile C:\\packer\\PingID.zip -TimeoutSec 6000",
+				"Expand-Archive c:\\packer\\PingID.zip -DestinationPath c:\\packer"
+			]
+    },
+		{
+			"type": "powershell",
+			"inline":
+			[
+				"Invoke-WebRequest -Uri https://wtsccmdeploy.blob.core.windows.net/software/Security/SEP/SEP.zip -OutFile C:\\packer\\SEP.zip -TimeoutSec 6000",
+				"Expand-Archive c:\\packer\\SEP.zip -DestinationPath c:\\packer"
+			]
+    },
+		{
+			"type": "powershell",
+			"inline":
+			[
+				"Invoke-WebRequest -Uri https://wtsccmdeploy.blob.core.windows.net/software/Security/SEP/SEP.zip -OutFile C:\\packer\\SEP.zip -TimeoutSec 6000",
+				"Expand-Archive c:\\packer\\SEP.zip -DestinationPath c:\\packer"
+			]
+    },
     {
 			"type": "file",
-			"source": "./sccm-primarysite/DeploymentConfigTemplate.xml",
-			"destination": "C:\\packer\\DeploymentConfigTemplate.xml"
-		},
-		{
-			"type": "powershell",
-			"inline": [
-			
-				"Install-WindowsFeature -ConfigurationFilePath C:\\packer\\DeploymentConfigTemplate.xml"
-			]
-		},
-		{
-			"type": "powershell",
-			"inline":
-			[
-				"Invoke-WebRequest -Uri https://wtsccmdeploy.blob.core.windows.net/software/WAIK.zip -OutFile C:\\packer\\waik.zip -TimeoutSec 6000",
-				"Expand-Archive c:\\packer\\waik.zip -DestinationPath c:\\packer"
-			]
-		},
-		{
-			"type": "file",
-			"source": "./sccm-primarysite/install_waik.bat",
-			"destination": "C:\\packer\\install_waik.bat"
-		},
-		{
-			"type": "windows-shell",
-			"inline": 
-			[
-        "cd C:\\packer\\waik",
-				"C:\\packer\\install_waik.bat"
-			]
-		},
-		{
-			"type": "powershell",
-			"inline":
-			[
-				"Invoke-WebRequest -Uri https://wtsccmdeploy.blob.core.windows.net/software/sccm_installer.zip -OutFile C:\\packer\\sccm_installer.zip -TimeoutSec 6000",
-				"Expand-Archive c:\\packer\\sccm_installer.zip -DestinationPath c:\\packer"
-			]
+			"source": "./security/HighSecPolicy.msc",
+			"destination": "C:\\packer\\HighSecPolicy.msc"
 		},
     {
       "type": "powershell",
       "inline": [
-        "Add-WindowsFeature Web-Server",
         "& $env:SystemRoot\\System32\\Sysprep\\Sysprep.exe /oobe /generalize /quiet /quit",
         "while($true) { $imageState = Get-ItemProperty HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup\\State | Select ImageState; if($imageState.ImageState -ne 'IMAGE_STATE_GENERALIZE_RESEAL_TO_OOBE') { Write-Output $imageState.ImageState; Start-Sleep -s 10  } else { break } }"
       ]
